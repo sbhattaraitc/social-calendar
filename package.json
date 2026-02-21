@@ -1,1 +1,1 @@
-{\n  "name": "social-calendar",\n  "private": true,\n  "workspaces": [\n    "apps/*"\n  ],\n  "scripts": {\n    "dev": "pnpm -r dev",\n    "build": "pnpm -r build",\n    "lint": "pnpm -r lint"\n  }\n}
+{\n  "name": "social-calendar",\n  "private": true,\n  "workspaces": ["apps/*"],\n  "scripts": {\n    "dev": "pnpm -r dev",\n    "build": "pnpm -r build",\n    "lint": "pnpm -r lint"\n  }\n}
