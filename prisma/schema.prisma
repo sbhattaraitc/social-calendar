@@ -1,14 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  groups       GroupMember[]
+  events       Event[]  @relation("CreatedBy")
+  notifications Notification[]
+  createdGroups Group[] @relation("GroupCreatedBy")
+  rsvps        EventRsvp[]
+  createdPolls  Poll[]
+  pollVotes     PollVote[]
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+model Group {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  createdById String
+  createdBy   User          @relation("GroupCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+  members     GroupMember[]
+  events      Event[]
+  polls       Poll[]
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  role      String   @default("member")
+  status    String   @default("active")
+  joinedAt  DateTime @default(now())
+
+  @@unique([groupId, userId])
+}
+
+model Event {
+  id         String   @id @default(uuid())
+  group      Group    @relation(fields: [groupId], references: [id])
+  groupId    String
+  createdBy  User     @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById String
+  title      String
+  description String?
+  locationText String?
+  startsAt   DateTime
+  endsAt     DateTime?
+  timezone   String?
+  createdAt  DateTime @default(now())
+  rsvps      EventRsvp[]
+}
+
+model EventRsvp {
+  id        String   @id @default(uuid())
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  status    String
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, userId])
+}
+
+model Poll {
+  id        String   @id @default(uuid())
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   String
+  question  String
+  createdBy User     @relation(fields: [createdById], references: [id])
+  createdById String
+  closesAt  DateTime?
+  createdAt DateTime @default(now())
+  options   PollOption[]
+  votes     PollVote[]
+}
+
+model PollOption {
+  id      String @id @default(uuid())
+  poll    Poll   @relation(fields: [pollId], references: [id])
+  pollId  String
+  text    String
+  votes   PollVote[]
+}
+
+model PollVote {
+  id       String @id @default(uuid())
+  poll     Poll   @relation(fields: [pollId], references: [id])
+  pollId   String
+  option   PollOption @relation(fields: [optionId], references: [id])
+  optionId String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  createdAt DateTime @default(now())
+
+  @@unique([pollId, userId])
+}
+
+model Notification {
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  type      String
+  payload   Json
+  readAt    DateTime?
   createdAt DateTime @default(now())
 }
