@@ -22,13 +22,13 @@ import path from 'path';
 
 app.get('/activity', (req, res) => {
   const activityPath = '/home/saugat/app/social-calendar/ACTIVITY.md';
-  fs.readFile(activityPath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).json({ ok: false, error: 'Failed to read activity log' });
-      return;
-    }
+  try {
+    const data = fs.readFileSync(activityPath, 'utf8');
     res.type('text/plain').send(data);
-  });
+  } catch (err) {
+    console.error('Error reading ACTIVITY.md:', err);
+    res.status(500).json({ ok: false, error: 'Failed to read activity log' });
+  }
 });
 
 const PORT = process.env.PORT || 3002;
