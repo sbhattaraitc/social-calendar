@@ -16,6 +16,21 @@ app.get('/health', (req, res) => {
     res.json({ ok: true });
 });
 
+// Serve the repo-level ACTIVITY.md so the web status page can fetch a live activity log
+import fs from 'fs';
+import path from 'path';
+
+app.get('/activity', (req, res) => {
+  const activityPath = path.resolve(__dirname, '../../../../ACTIVITY.md');
+  fs.readFile(activityPath, 'utf8', (err, data) => {
+    if (err) {
+      res.status(500).json({ ok: false, error: 'Failed to read activity log' });
+      return;
+    }
+    res.type('text/plain').send(data);
+  });
+});
+
 const PORT = process.env.PORT || 3001;
 
 http.listen(PORT, '0.0.0.0', () => {
