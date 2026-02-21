@@ -31,6 +31,19 @@ app.get('/activity', (req, res) => {
   }
 });
 
+// Debug endpoint: report fs checks so we can see why reading fails
+app.get('/activity-debug', (req, res) => {
+  const activityPath = '/home/saugat/app/social-calendar/ACTIVITY.md';
+  try {
+    const exists = fs.existsSync(activityPath);
+    const stat = exists ? fs.statSync(activityPath) : null;
+    res.json({ exists, stat });
+  } catch (err) {
+    console.error('Debug read error:', err);
+    res.status(500).json({ ok: false, error: 'Debug read failed' });
+  }
+});
+
 const PORT = process.env.PORT || 3002;
 
 http.listen(PORT, '0.0.0.0', () => {
