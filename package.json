@@ -1,0 +1,7 @@
+{
+  "name": "social-calendar",
+  "private": true,
+  "devDependencies": {
+    "pnpm": "^6.0.0"
+  }
+}
