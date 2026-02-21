@@ -5,7 +5,8 @@ export default function Status(){
 
   async function fetchActivity(){
     try{
-      const res = await fetch('/ACTIVITY.md');
+      const apiUrl = `${location.protocol}//${location.hostname}:3002/activity`;
+      const res = await fetch(apiUrl);
       if(!res.ok){ setActivity('Failed to load activity'); return }
       const text = await res.text();
       setActivity(text);
