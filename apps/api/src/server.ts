@@ -21,7 +21,7 @@ import fs from 'fs';
 import path from 'path';
 
 app.get('/activity', (req, res) => {
-  const activityPath = path.resolve(__dirname, '../../../ACTIVITY.md');
+  const activityPath = '/home/saugat/app/social-calendar/ACTIVITY.md';
   fs.readFile(activityPath, 'utf8', (err, data) => {
     if (err) {
       res.status(500).json({ ok: false, error: 'Failed to read activity log' });
