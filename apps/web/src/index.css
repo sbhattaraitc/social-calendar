@@ -1,0 +1,8 @@
+/* minimal stylesheet to satisfy import. Add Tailwind or custom styles later */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+h1 { color: #111827; }
