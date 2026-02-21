@@ -31,7 +31,7 @@ app.get('/activity', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 http.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
