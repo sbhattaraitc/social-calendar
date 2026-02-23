@@ -2,6 +2,7 @@ import express from 'express';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -20,27 +21,22 @@ app.get('/health', (req, res) => {
 import fs from 'fs';
 import path from 'path';
 
-app.get('/activity', (req, res) => {
-  const activityPath = '/home/saugat/app/social-calendar/ACTIVITY.md';
+const ACTIVITY_PATH = process.env.ACTIVITY_PATH || path.resolve(process.cwd(), 'ACTIVITY.md');
+
+const activityLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.get('/activity', activityLimiter, (req, res) => {
   try {
-    const data = fs.readFileSync(activityPath, 'utf8');
+    const data = fs.readFileSync(ACTIVITY_PATH, 'utf8');
     res.type('text/plain').send(data);
   } catch (err) {
     console.error('Error reading ACTIVITY.md:', err);
     res.status(500).json({ ok: false, error: 'Failed to read activity log' });
-  }
-});
-
-// Debug endpoint: report fs checks so we can see why reading fails
-app.get('/activity-debug', (req, res) => {
-  const activityPath = '/home/saugat/app/social-calendar/ACTIVITY.md';
-  try {
-    const exists = fs.existsSync(activityPath);
-    const stat = exists ? fs.statSync(activityPath) : null;
-    res.json({ exists, stat });
-  } catch (err) {
-    console.error('Debug read error:', err);
-    res.status(500).json({ ok: false, error: 'Debug read failed' });
   }
 });
 

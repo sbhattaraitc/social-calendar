@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
+const API_BASE = import.meta.env.VITE_API_BASE || `${location.protocol}//${location.hostname}:3002`;
+const ACTIVITY_POLL_INTERVAL_MS = 5000;
+
 export default function Status(){
   const [activity, setActivity] = useState('Loading...');
 
   async function fetchActivity(){
     try{
-      const apiUrl = `${location.protocol}//${location.hostname}:3002/activity`;
-      const res = await fetch(apiUrl);
+      const res = await fetch(`${API_BASE}/activity`);
       if(!res.ok){ setActivity('Failed to load activity'); return }
       const text = await res.text();
       setActivity(text);
@@ -15,7 +17,7 @@ export default function Status(){
 
   useEffect(()=>{
     fetchActivity();
-    const id = setInterval(fetchActivity, 5000);
+    const id = setInterval(fetchActivity, ACTIVITY_POLL_INTERVAL_MS);
     return ()=> clearInterval(id);
   },[]);
 
